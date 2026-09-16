@@ -66,7 +66,7 @@
   <div class="panel" id="panel-search"><div class="card"><label>Телефон клиента</label><input type="tel" id="sPhone" placeholder="+995 5XX XX XX XX"><button class="save" id="sSubmit">Найти</button></div><div id="sResult"></div></div>
 </div>
 <script>
-  const WEB_APP_URL = 'ВСТАВЬ_СЮДА_ADRES_APPS_SCRIPT';
+  const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbw5cV-QOFD9D_O9hTyXyvXyy_s5PHHf4pQ75NtpAfLRfZKJ57hGiRTaKHkJTaINSAyM/exec';
   function apiCall(action, payload) { if (!WEB_APP_URL || WEB_APP_URL.indexOf('ВСТАВЬ_СЮДА') !== -1) return Promise.resolve({ ok:false,error:'Ещё не подключено к таблице — не вставлена ссылка WEB_APP_URL.' }); return fetch(WEB_APP_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(Object.assign({action:action},payload))}).then(r=>r.json()).catch(function(){return {ok:false,error:'Не получилось связаться с сервером. Проверь интернет или ссылку WEB_APP_URL.'};}); }
   document.querySelectorAll('.tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById('panel-'+tab.dataset.tab).classList.add('active');if(tab.dataset.tab==='today')loadToday();if(tab.dataset.tab==='all')loadAll();});});
   function todayStr(){return new Date().toISOString().slice(0,10);}
