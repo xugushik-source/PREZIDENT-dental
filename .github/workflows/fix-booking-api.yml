@@ -1,0 +1,38 @@
+name: Fix PREZIDENT booking API calls
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/fix-booking-api.yml'
+permissions:
+  contents: write
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Fix booking action and payload
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('index.html')
+          s=p.read_text(encoding='utf-8')
+          old="apiCall('bookOnline',{name,lastName,phone,date:selectedDate,time:selectedTime,complaint:parts.join(' | '),price:services?services.total:''})"
+          new="apiCall('book',{name,lastName,phone,date:selectedDate,time:selectedTime,note:parts.join(' | '),price:services?services.total:''})"
+          if old not in s:
+              raise SystemExit('Expected PREZIDENT booking call not found')
+          s=s.replace(old,new)
+          p.write_text(s,encoding='utf-8')
+          assert "apiCall('bookOnline'" not in s
+          assert "apiCall('book'" in s
+          PY
+      - name: Commit fix
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git commit -m 'Fix PREZIDENT timed booking API action'
+          git push
